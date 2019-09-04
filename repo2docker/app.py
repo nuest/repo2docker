@@ -37,6 +37,7 @@ from .buildpacks import (
     PipfileBuildPack,
     PythonBuildPack,
     RBuildPack,
+    PlainBuildPack
 )
 from . import contentproviders
 from .utils import ByteSpecification, chdir
@@ -90,6 +91,7 @@ class Repo2Docker(Application):
 
     buildpacks = List(
         [
+            PlainBuildPack,
             LegacyBinderDockerBuildPack,
             DockerBuildPack,
             JuliaProjectTomlBuildPack,
@@ -102,7 +104,7 @@ class Repo2Docker(Application):
         ],
         config=True,
         help="""
-        Ordered list of BuildPacks to try when building a git repository.
+        Ordered list of BuildPacks to try when building a repository.
         """,
     )
 
@@ -651,7 +653,12 @@ class Repo2Docker(Application):
 
             with chdir(checkout_path):
                 for BP in self.buildpacks:
-                    bp = BP()
+                    # FIXME suggest to expose cli vars to buildpacks
+                    if issubclass(BP, PlainBuildPack):
+                        bp = BP(self)
+                    else:
+                        bp = BP()
+                    
                     if bp.detect():
                         picked_buildpack = bp
                         break

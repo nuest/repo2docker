@@ -198,6 +198,14 @@ def get_argparser():
 
     argparser.add_argument("--cache-from", action="append", default=[])
 
+    argparser.add_argument(
+        "--plain",
+        dest="plain",
+        action="store_true",
+        help="Create a plain Dockerfile without Jupyter, implies --debug --no-build",
+        # help=self.traits()['plain'].help,
+    )
+
     return argparser
 
 
@@ -218,10 +226,16 @@ def make_r2d(argv=None):
 
     r2d = Repo2Docker()
 
+    if args.plain:
+        args.debug = True
+        args.build = False
+        r2d.plain = True
+
     if args.debug:
         r2d.log_level = logging.DEBUG
 
     r2d.load_config_file(args.config)
+
     if args.appendix:
         r2d.appendix = args.appendix
 
@@ -243,7 +257,7 @@ def make_r2d(argv=None):
                 "as it is not a directory".format(args.repo),
                 extra=dict(phase="failed"),
             )
-            sys.exit(1)
+            sys.detectexit(1)
 
     if args.image_name:
         r2d.output_image_spec = args.image_name
