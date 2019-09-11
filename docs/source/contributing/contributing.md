@@ -77,7 +77,8 @@ These are not hard rules to be enforced by 🚓 but they are suggestions written
   The best PRs solve one problem.
   If you end up changing multiple things, please open separate PRs for the different conceptual changes.
 * **Add tests to your code.**
-  PRs will not be merged if Travis is failing.
+  PRs will not be merged if CI shows failing tests.
+  You can run tests locally to avoid that - see section "Common tasks".
 * **Apply [PEP8](https://www.python.org/dev/peps/pep-0008/)** as much as possible, but not too much.
   If in doubt, ask.
 * **Use merge commits** instead of merge-by-squashing/-rebasing.
